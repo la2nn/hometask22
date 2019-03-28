@@ -40,11 +40,14 @@ class Father: Human {
     var wife: Mother!
     var children: [Children]!
     
-    lazy var callFamily = { print("Hey family: \(self.wife.name), \(self.children[0].name), \(self.children[1].name)!") }()
-    // не стал делать цикл по массиву детей, не суть // [unowned self] in            // работает без этого
-    lazy var callMother = { print("Hey wife: \(self.wife.name)!") }()
+    lazy var callFamily: () -> String = { [unowned self] in
+        return "Hey family: \(self.wife.name), \(self.children[0].name), \(self.children[1].name)!" }
+   
+    lazy var callMother: () -> String = { [unowned self] in
+        return "Hey wife: \(self.wife.name)!" }
     
-    lazy var callChildren = { print("Hey kids: \(self.children[0].name), \(self.children[1].name)!") }()
+    lazy var callChildren: () -> String = { [unowned self] in
+        return "Hey kids: \(self.children[0].name), \(self.children[1].name)!" }
     
     deinit {
         print("Father deinit")
@@ -93,9 +96,9 @@ if 5+5 == 10 {
     mom.children = kids
     let family = Family(dad: dad)
     
-    print(dad.callFamily)
-    print(dad.callMother)
-    print(dad.callChildren)
+    print(dad.callFamily())
+    print(dad.callMother())
+    print(dad.callChildren())
     print(family.printFamilyMembers())
     
     for kid in kids {
