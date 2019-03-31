@@ -55,24 +55,23 @@ class Dog: Pet {
     }
 }
 
-func familyCreatorFor(human: Human) -> Human {
+var humans = [Human]()
+
+func configureHuman(_ human: Human) {
     let brothers = [Male](repeating: Male(), count: 3)
     let sisters = [Female](repeating: Female(), count: 4)
     let pets = [Parrot(), Dog(), Dog(), Cat(), Cat()]
-    
+
     // mother and father
     human.mother = Female()
     human.father = Male()
-
-    
     // three brothers and four sisters
     human.brothers = brothers
     human.sisters = sisters
-    
     // five pets
     human.pets = pets
     
-    return human
+    humans.append(human)
 }
 
 var human1 = Human()
@@ -81,13 +80,11 @@ var human3 = Human()
 var human4 = Human()
 var human5 = Human()
 
-human1 = familyCreatorFor(human: human1)
-human2 = familyCreatorFor(human: human2)
-human3 = familyCreatorFor(human: human3)
-human4 = familyCreatorFor(human: human4)
-human5 = familyCreatorFor(human: human5)
-
-let humans = [human1, human2, human3, human4, human5]
+configureHuman(human1)
+configureHuman(human2)
+configureHuman(human3)
+configureHuman(human4)
+configureHuman(human5)
 
 human1.mother?.command()            // printed - Move my sofa!
 human1.mother = nil
@@ -114,27 +111,30 @@ for human in humans {
             countOfSisters += 1
         }
     }
+    
     if let brothers = human.brothers {
         for _ in brothers {
             countOfBrothers += 1
         }
     }
+    
     if let pets = human.pets {
         for pet in pets {
-            switch pet {
-            case is Dog: countOfDogs += 1
-            pet.makeSound()
-            case is Parrot: countOfParrots += 1
-            pet.makeSound()
-            case is Cat: countOfCats += 1
-            pet.makeSound()
-            default: break
+            if let dog = pet as? Dog {
+                countOfDogs += 1
+            }
+            if let cat = pet as? Cat {
+                countOfCats += 1
+            }
+            if let parrot = pet as? Parrot {
+                countOfParrots += 1
             }
             arrayOfPets.append(pet)
         }
     }
 }
 
+arrayOfPets.map{$0.makeSound()}
 print(countOfDogs)
 print(countOfCats)
 print(countOfParrots)
