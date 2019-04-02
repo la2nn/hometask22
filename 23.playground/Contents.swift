@@ -33,31 +33,33 @@ class Female: Human {
 
 class Pet {
     func makeSound() {
-        print("sound?")
     }
 }
 
 class Parrot: Pet {
     override func makeSound() {
+        super.makeSound
         print("Hello world")
     }
 }
 
 class Cat: Pet {
     override func makeSound() {
+        super.makeSound
         print("Meow - meow")
     }
 }
 
 class Dog: Pet {
     override func makeSound() {
+        super.makeSound
         print("Woof woof motherfucker")
     }
 }
 
 var humans = [Human]()
 
-func configureHuman(_ human: Human) {
+func configureHuman(_ human: Human) -> Human {               // не понял зачем на выходе Human. reference type же?
     let brothers = [Male](repeating: Male(), count: 3)
     let sisters = [Female](repeating: Female(), count: 4)
     let pets = [Parrot(), Dog(), Dog(), Cat(), Cat()]
@@ -72,6 +74,7 @@ func configureHuman(_ human: Human) {
     human.pets = pets
     
     humans.append(human)
+    return human
 }
 
 var human1 = Human()
@@ -103,42 +106,35 @@ var countOfParrots = 0
 var countOfSisters = 0
 var countOfBrothers = 0
 
-var arrayOfPets = [Pet]()
+let arrayOfPets = (humans.compactMap { $0.pets }).flatMap { $0 }
+arrayOfPets.forEach { pet in
+    pet.makeSound()
+    
+    if let dog = pet as? Dog {
+        countOfDogs += 1
+    }
+    if let cat = pet as? Cat {
+        countOfCats += 1
+    }
+    if let parrot = pet as? Parrot {
+        countOfParrots += 1
+    }
+    
+}
 
-for human in humans {
-    if let sisters = human.sisters {
-        for _ in sisters {
-            countOfSisters += 1
-        }
+humans.forEach { human in
+    human.sisters?.compactMap { $0 }.forEach { sister in
+        countOfSisters += 1
     }
-    
-    if let brothers = human.brothers {
-        for _ in brothers {
-            countOfBrothers += 1
-        }
-    }
-    
-    if let pets = human.pets {
-        for pet in pets {
-            if let dog = pet as? Dog {
-                countOfDogs += 1
-            }
-            if let cat = pet as? Cat {
-                countOfCats += 1
-            }
-            if let parrot = pet as? Parrot {
-                countOfParrots += 1
-            }
-            arrayOfPets.append(pet)
-        }
+    human.brothers?.compactMap { $0 }.forEach { brother in
+        countOfBrothers += 1
     }
 }
 
-arrayOfPets.map{$0.makeSound()}
 print(countOfDogs)
 print(countOfCats)
 print(countOfParrots)
 print(countOfSisters)
 print(countOfBrothers)
-print(arrayOfPets.count)
+
 
