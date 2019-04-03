@@ -5,6 +5,7 @@
  У Папы есть 3 кложера (closures) - 1. когда он обращается к Семье - распечатать всю Семью, 2. распечатать Маму, 3. распечатать всех Детей.
  Создать всю иерархию со связями. При выходе из зоны видимости все объекты должны быть уничтожены. */
 // { [capture list : weak ..? / unowned ... ] in .. }
+
 class Human {
     var name: String
     
@@ -14,40 +15,69 @@ class Human {
 }
 
 class Family {
-    var dad: Father
-    var mom: Mother
+    var dad: Father?
+    var mom: Mother?
     var kids: [Children]
     
-    func printFamilyMembers() -> [String] {
+    func getFamilyMembersNames() -> [String] {
         print("Принтим семью ->")
-        var family = [String]()
-        family.append(dad.name)
-        family.append(mom.name)
-        family.append(kids[0].name)
-        family.append(kids[1].name)
-        
-        return family
+        var family = [Human]()
+        if let father = dad {
+            family.append(father)
+        }
+        if let mother = mom {
+            family.append(mother)
+        }
+        kids.forEach { kid in
+            family.append(kid)
+        }
+        return family.map { $0.name }
     }
-    init(dad: Father) {
-        
+    
+    init(dad: Father) {             // если пляшем от батька
         self.dad = dad
-        self.mom = dad.wife
-        self.kids = dad.children!
+        if let wife = dad.wife {
+            self.mom = wife
+        }
+        self.kids = dad.children
+    }
+    
+    init(mom: Mother) {              // если пляшем от детей
+        self.mom = mom
+        if let husband = mom.husband {
+            self.dad = husband
+        }
+        self.kids = mom.children
     }
 }
 
 class Father: Human {
-    var wife: Mother!
-    var children: [Children]!
+    var wife: Mother?
+    var children: [Children] = []
     
     lazy var callFamily: () -> String = { [unowned self] in
-        return "Hey family: \(self.wife.name), \(self.children[0].name), \(self.children[1].name)!" }
-   
+        var wifeName = ""
+        if let motherName = self.wife?.name {
+            wifeName += motherName + ", "
+        }
+        return "Hey family: " + wifeName + self.childrenNames()
+    }
+    
     lazy var callMother: () -> String = { [unowned self] in
-        return "Hey wife: \(self.wife.name)!" }
+        if let wifeName = self.wife?.name {
+            return "Hey wife: \(wifeName) !"
+        }
+        return "Нема жены"
+    }
     
     lazy var callChildren: () -> String = { [unowned self] in
-        return "Hey kids: \(self.children[0].name), \(self.children[1].name)!" }
+        return "Hey kids: " + self.childrenNames()
+    }
+    
+    func childrenNames() -> String {
+        let childrenNames = self.children.map { $0.name }
+        return childrenNames.joined(separator: ", ")
+    }
     
     deinit {
         print("Father deinit")
@@ -55,8 +85,8 @@ class Father: Human {
 }
 
 class Mother: Human {
-    weak var husband: Father!
-    var children: [Children]!
+    weak var husband: Father?
+    var children: [Children] = []
     
     deinit {
         print("Mother deinit")
@@ -67,14 +97,24 @@ class Children: Human {
     weak var father: Father?
     weak var mother: Mother?
     
-    func giveMeToy() {
-        print("\(self.name), let me play with your toy!")
+    func giveMeToy(_ brotherName: String) {
+        if let brother = father?.children.first(where: { $0.name == brotherName }) {
+            print("\(brotherName) give me a TOY!")
+        } else {
+            print("Такого брата нет!")
+        }
     }
+    
     func giveMeCandy() {
-        print("\(mother!.name), gimme a candy, please!")
+        if let momName = mother?.name {
+            print("\(momName), gimme a candy, please!")
+        }
     }
+    
     func buyToy() {
-        print("\(father!.name), buy me more toys!")
+        if let dadName = father?.name {
+            print("\(dadName), buy me more toys!")
+        }
     }
     
     deinit {
@@ -82,35 +122,38 @@ class Children: Human {
     }
 }
 
-if 5+5 == 10 {
-
+func actionsWithFamily() {
+    
     let mom = Mother(name: "Маман")
     let dad = Father(name: "Папаc")
-    let kid1 = Children(name: "Ребенок1")
-    let kid2 = Children(name: "Ребенок2")
+    let kid1 = Children(name: "Джон")
+    let kid2 = Children(name: "Сноу")
     let kids = [kid1, kid2]
     
     dad.wife = mom
+    //dad.wife = nil       работает тема
     dad.children = kids
     mom.husband = dad
     mom.children = kids
+    
     let family = Family(dad: dad)
     
     print(dad.callFamily())
     print(dad.callMother())
     print(dad.callChildren())
-    print(family.printFamilyMembers())
+    print(family.getFamilyMembersNames())
     
-    for kid in kids {
+    kids.forEach { kid in
         kid.father = dad
         kid.mother = mom
     }
     
-    kid1.giveMeToy()
+    kid1.giveMeToy("Джон")
+    kid1.giveMeToy("Сноу")
     kid1.giveMeCandy()
     kid2.buyToy()
     
     print("Минус семья: ")
 }
 
-
+actionsWithFamily()
