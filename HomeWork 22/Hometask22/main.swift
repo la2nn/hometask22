@@ -57,13 +57,10 @@ class Father: Human {
     
     lazy var callFamily: () -> String = { [unowned self] in
         var wifeName = ""
-        
         if let motherName = self.wife?.name {
             wifeName += motherName + ", "
         }
-        
-        let childrenNames = self.children.map { $0.name }
-        return "Hey family: " + wifeName + self.callChidren()
+        return "Hey family: " + wifeName + self.childrenNames()
     }
     
     lazy var callMother: () -> String = { [unowned self] in
@@ -74,11 +71,10 @@ class Father: Human {
     }
     
     lazy var callChildren: () -> String = { [unowned self] in
-        let childrenNames = self.children.map { $0.name }
-        return "Hey kids: " + self.callChidren()
+        return "Hey kids: " + self.childrenNames()
     }
     
-    func callChidren() -> String {
+    func childrenNames() -> String {
         let childrenNames = self.children.map { $0.name }
         return childrenNames.joined(separator: ", ")
     }
@@ -102,12 +98,10 @@ class Children: Human {
     weak var mother: Mother?
     
     func giveMeToy(_ brotherName: String) {
-        if let kids = father?.children {
-            if brotherName != self.name && (kids.map { $0.name }).contains(brotherName) {
-                print("\(brotherName) give me a TOY!")
-            } else {
-                print("Такого брата нет!")
-            }
+        if let brother = father?.children.first(where: { $0.name == brotherName }) {
+            print("\(brotherName) give me a TOY!")
+        } else {
+            print("Такого брата нет!")
         }
     }
     
@@ -128,8 +122,8 @@ class Children: Human {
     }
 }
 
-//func actionsWithFamily() {
-if true {
+func actionsWithFamily() {
+    
     let mom = Mother(name: "Маман")
     let dad = Father(name: "Папаc")
     let kid1 = Children(name: "Джон")
@@ -162,4 +156,4 @@ if true {
     print("Минус семья: ")
 }
 
-//actionsWithFamily()
+actionsWithFamily()
