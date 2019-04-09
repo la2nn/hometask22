@@ -59,7 +59,7 @@ class Dog: Pet {
 
 var humans = [Human]()
 
-func configureHuman(_ human: Human) -> Human {               // не понял зачем на выходе Human. reference type же?
+func configureHuman(_ human: Human) {
     let brothers = [Male](repeating: Male(), count: 3)
     let sisters = [Female](repeating: Female(), count: 4)
     let pets = [Parrot(), Dog(), Dog(), Cat(), Cat()]
@@ -74,7 +74,6 @@ func configureHuman(_ human: Human) -> Human {               // не понял 
     human.pets = pets
     
     humans.append(human)
-    return human
 }
 
 var human1 = Human()
