@@ -13,13 +13,13 @@ extension UInt8 {
 }
 
 enum ShoppingList: UInt8 {
-    case Bread =    0b00000001
-    case Chicken =  0b00000010
-    case Apples =   0b00000100
-    case Pears =    0b00001000
+    case bread =    0b00000001
+    case chicken =  0b00000010
+    case apples =   0b00000100
+    case pears =    0b00001000
 }
 
-var checkList: UInt8 = 0b00001001
+var checkList: UInt8 = (ShoppingList.bread.rawValue | ShoppingList.pears.rawValue)
 
 extension ShoppingList {
     static func isPurchased(_ item: ShoppingList) -> Bool {
@@ -35,36 +35,36 @@ extension ShoppingList {
     }
 }
 
-ShoppingList.isPurchased(.Bread)            // true
-ShoppingList.isPurchased(.Chicken)          // false
-ShoppingList.purchase(.Chicken)
-ShoppingList.isPurchased(.Chicken)          // true
-ShoppingList.removeItem(.Bread)
+ShoppingList.isPurchased(.bread)            // true
+ShoppingList.isPurchased(.chicken)          // false
+ShoppingList.purchase(.chicken)
+ShoppingList.isPurchased(.chicken)          // true
+ShoppingList.removeItem(.bread)
 checkList.binary()
-ShoppingList.isPurchased(.Bread)            // false
+ShoppingList.isPurchased(.bread)            // false
 
 // 2. Создать цикл, который будет выводить 1 байтное число с одним установленным битом в такой последовательности, чтобы в консоли получилась вертикальная синусоида
 
 enum Direction {
-    case Left
-    case Right
+    case left
+    case right
 }
 
 var sin: UInt8 = 0b00000001
-var currentDirection = Direction.Left
+var currentDirection: Direction = .left
 
 for _ in 0..<16 {
     print(sin.binary())
     
     switch sin {
-    case 0b00000001: currentDirection = .Left
-    case 0b10000000: currentDirection = .Right
+    case 0b00000001: currentDirection = .left
+    case 0b10000000: currentDirection = .right
     default: break
     }
  
     switch currentDirection {
-    case .Left: sin = sin << 1
-    case .Right: sin = sin >> 1
+    case .left: sin = sin << 1
+    case .right: sin = sin >> 1
     }
 }
 
@@ -76,16 +76,21 @@ enum Column: UInt64 {
     case A = 1, B, C, D, E, F, G, H
 }
 
-func mask(_ column: Column, _ row: UInt64) -> UInt64 {
-    return 1 << (column.rawValue * 8 + row)
-}
-
 func cellColor(_ column: Column, _ row: UInt64) {
-    if row == 8 && column == .H { return print("White") }
-    return (chessboard & mask(column, row) != 0) ? print("Black") : print("White")
+    
+    guard 1...8 ~= row else {
+        print("Дружище, шахматная доска 8х8, ты что-то попутал..")
+        return
+    }
+    
+    var pointer: UInt64 = 0b00000000_00000000_00000000_00000000_00000000_00000000_00000000_00000001
+    pointer = pointer << (row * column.rawValue - 1)
+    pointer & chessboard != 0 ? print("This cell is black!") : print("This cell is white!")
+
 }
 
-cellColor(.A, 1)        // white
+cellColor(.A, 1)        // black
 cellColor(.A, 2)        // white
 cellColor(.G, 8)        // white
-
+cellColor(.H, 8)        // black
+cellColor(.H, 9)        // error
