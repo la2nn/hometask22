@@ -31,18 +31,15 @@ extension Int {
                 return
             }
 
-            var numberArrayed = [Int]()                                  // создаю массив, куда будут складываться все числа типа Int, а не Character ( Array(str) будут Character все элементы )
+            var numberComponents = [Int]()
             let result = Array(str)
-            var resultString = ""                                        // да, можно было бы сделать var str и его removeAll, но после reversed он уже не типа String, поэтому создаю новую переменную
+            var resultString = ""
             
-            numberArrayed = result.map { Int(String($0)) ?? 0 }          // Закидываем в массив перевернутый |self|
-            numberArrayed[index] = newValue                              // меняем [index] на нужное значение
+            numberComponents = result.map { Int(String($0)) ?? 0 }
+            numberComponents[index] = newValue
+            resultString = numberComponents.map { String($0) }.joined(separator: "")
             
-            for number in numberArrayed {
-                resultString += String(number)                           // ну и теперь все закидываем строку
-            }
-            
-            isNegative ? (self = (Int(String(resultString.reversed())) ?? 0) * (-1)) : (self = Int(String(resultString.reversed())) ?? 0)
+            self = (Int(String(resultString.reversed())) ?? 0) * (isNegative ? -1 : 1)
         }
     }
 }
@@ -98,5 +95,3 @@ testString[0..<3]                           // "HeH"
 
 print(testString.truncate(length: 15))
 print(testString.truncate(length: 4444))
-
-
