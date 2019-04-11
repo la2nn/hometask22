@@ -52,8 +52,8 @@ struct Size {
     var width: Double
     
     init(length: Double, width: Double) {                                   // Дабы избежать отрицательных величин
-        length > 0 ? (self.length = length) : (self.length = 0)
-        width > 0 ? (self.width = width) : (self.width = 0)
+        self.length = length > 0 ? length : 0
+        self.width = width > 0 ? width : 0
     }
 }
 
@@ -62,10 +62,14 @@ struct Rect {
     var size: Size
     
    func cornersOfRect() -> [Point] {
-        let bottomLeftPoint = Point(x: self.point.x - self.size.width / 2, y: self.point.y - self.size.length / 2)
-        let upperLeftPoint = Point(x: self.point.x - self.size.width / 2, y: self.point.y + self.size.length / 2)
-        let bottomRightPoint = Point(x: self.point.x + self.size.width / 2, y: self.point.y - self.size.length / 2)
-        let upperRightPoint = Point(x: self.point.x + self.size.width / 2, y: self.point.y + self.size.length / 2)
+        let bottomLeftPoint = Point(x: point.x - size.width / 2,
+                                    y: point.y - size.length / 2)
+        let upperLeftPoint = Point(x: point.x - size.width / 2,
+                                   y: point.y + size.length / 2)
+        let bottomRightPoint = Point(x: point.x + size.width / 2,
+                                     y: point.y - size.length / 2)
+        let upperRightPoint = Point(x: point.x + size.width / 2,
+                                    y: point.y + size.length / 2)
         return [bottomLeftPoint, upperLeftPoint, bottomRightPoint, upperRightPoint]
     }
 }
@@ -77,7 +81,11 @@ print(rect1.cornersOfRect())
 // ну пусть действия производятся с параметрами длин этих четырехугольников, а точка пусть будет всегда среднее расстояниями между средними точками прямоугольников
 
 func + (rect1: Rect, rect2: Rect) -> Rect {
-    return Rect(point: Point(x: (rect1.point.x + rect2.point.x) / 2, y: (rect1.point.y + rect2.point.y) / 2), size: Size(length: rect1.size.length + rect2.size.length, width: rect1.size.width + rect2.size.width))
+    let newPoint = Point(x: (rect1.point.x + rect2.point.x) / 2,
+                         y: (rect1.point.y + rect2.point.y) / 2)
+    let newSizeParameters = Size(length: rect1.size.length + rect2.size.length,
+                                 width: rect1.size.width + rect2.size.width)
+    return Rect(point: newPoint, size: newSizeParameters)
 }
 
 func += (rect1: inout Rect, rect2: Rect) {
@@ -85,7 +93,11 @@ func += (rect1: inout Rect, rect2: Rect) {
 }
 
 func - (rect1: Rect, rect2: Rect) -> Rect {
-    return Rect(point: Point(x: (rect1.point.x + rect2.point.x) / 2, y: (rect1.point.y + rect2.point.y) / 2), size: Size(length: abs(rect1.size.length - rect2.size.length), width: abs(rect1.size.width - rect2.size.width)))
+    let newPoint = Point(x: (rect1.point.x + rect2.point.x) / 2,
+                         y: (rect1.point.y + rect2.point.y) / 2)
+    let newSizeParameters = Size(length: abs(rect1.size.length - rect2.size.length),
+                                 width: abs(rect1.size.width - rect2.size.width))
+    return Rect(point: newPoint, size: newSizeParameters)
 }
 
 func -= (rect1: inout Rect, rect2: Rect) {
@@ -143,7 +155,7 @@ func ~~ (str1: inout String, str2: String) {
 
 var str1 = "abcdemeo1a123asdads"
 var str2 = "obcaemeow"
-
+var str3 = "abc"
+var str4 = "obcaemeow"
 str1 ~~ str2
 print(str1)         // it works         // aBCdEMEO1a123asdads
-
