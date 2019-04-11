@@ -122,12 +122,8 @@ arrayOfPets.forEach { pet in
 }
 
 humans.forEach { human in
-    human.sisters?.compactMap { $0 }.forEach { sister in
-        countOfSisters += 1
-    }
-    human.brothers?.compactMap { $0 }.forEach { brother in
-        countOfBrothers += 1
-    }
+    countOfSisters += human.sisters?.count ?? 0
+    countOfBrothers += human.brothers?.count ?? 0
 }
 
 print(countOfDogs)
