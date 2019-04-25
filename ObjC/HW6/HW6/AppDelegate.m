@@ -31,28 +31,38 @@
     
     // error ->    student.toGo = PlacesTown;
     
-    CGPoint p1;
+   
+    CGPoint p1 = CGPointMake(0, 10);
+    /* OR
+     CGPoint p1;
     p1.x = 0;
-    p1.y = 10;
+    p1.y = 10; */
     
-    CGRect field;
+    CGRect field = CGRectMake(p1.x, p1.y, 10, 10);
+    
+    /* OR
+     CGRect field;
     field.origin = p1;
     field.size.height = 10;
-    field.size.width = 10;
+    field.size.width = 10; */
     
+    CGRect square = CGRectMake(7, 4, 3, 3);
+    
+    /* OR
     CGRect square;
     square.origin.x = 7;
     square.origin.y = 4;
     square.size.height = 3;
-    square.size.width = 3;
+    square.size.width = 3;   */
     
     int couter = 0;
     
     NSMutableArray *points = [[NSMutableArray alloc] init];
     
-    for (int i = 0; i != 10; i++) {
+    for (int i = 0; i < 10; i++) {
         CGPoint point = CGPointMake(arc4random_uniform(10), arc4random_uniform(10));
-        if (point.x >= 4 && point.x <= 7 && point.y >= 4 && point.y <= 7) {
+        
+        if (CGRectContainsPoint(square, point)) {
             NSLog(@"Point with coordinates %f %f intersects square in center of field", point.x, point.y);
             couter += 1;
         }
